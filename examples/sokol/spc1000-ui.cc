@@ -6,6 +6,7 @@
 #include "chips/z80.h"
 #include "chips/beeper.h"
 #include "chips/ay38910.h"
+#include "chips/mc6847.h"
 #include "chips/kbd.h"
 #include "chips/clk.h"
 #include "chips/mem.h"
