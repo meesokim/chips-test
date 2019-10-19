@@ -173,7 +173,14 @@ void app_input(const sapp_event* event) {
                 case SAPP_KEYCODE_ENTER:        c = 0x0D; break;
                 case SAPP_KEYCODE_BACKSPACE:    c = 0x0C; break;
                 case SAPP_KEYCODE_ESCAPE:       c = 0x07; break;
-                case SAPP_KEYCODE_LEFT_CONTROL: c = 0x0F; break; /* SymShift */
+                case SAPP_KEYCODE_RIGHT_CONTROL:c = 0x0F; break; 
+                case SAPP_KEYCODE_LEFT_CONTROL: c = 0x0F; break; 
+                case SAPP_KEYCODE_F1:           c = 0xF1; break;
+                case SAPP_KEYCODE_F2:           c = 0xF2; break;
+                case SAPP_KEYCODE_F3:           c = 0xF3; break;
+                case SAPP_KEYCODE_F4:           c = 0xF4; break;
+                case SAPP_KEYCODE_F5:           c = 0xF5; break;
+                case SAPP_KEYCODE_END:          c = 0xF6; break;
                 default:                        c = 0; break;
             }
             if (c) {
