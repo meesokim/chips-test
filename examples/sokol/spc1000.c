@@ -66,9 +66,13 @@ spc1000_desc_t spc1000_desc(spc1000_type_t type, spc1000_joystick_type_t joy_typ
         .audio_cb = push_audio,
         .audio_sample_rate = saudio_sample_rate(),
         .rom_spc1000 = dump_spcall_rom,
-        .rom_spc1000_size = sizeof(dump_spcall_rom)    };
+        .rom_spc1000_size = sizeof(dump_spcall_rom),
+        .tap_spc1000 = dump_demo_tap,
+        .tap_spc1000_size = sizeof(dump_demo_tap)
+        };
 }
 
+#include <stdio.h>
 /* one-time application init */
 void app_init() {
     gfx_init(&(gfx_desc_t){
@@ -94,11 +98,13 @@ void app_init() {
     spc1000ui_init(&spc1000);
     #endif
     bool delay_input = false;
+    //printf("name=%s\n", sargs_value("file"));
     if (sargs_exists("file")) {
         delay_input = true;
         if (!fs_load_file(sargs_value("file"))) {
             gfx_flash_error();
         }
+        //spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
     }
     if (!delay_input) {
         if (sargs_exists("input")) {
@@ -110,9 +116,9 @@ void app_init() {
 /* per frame stuff, tick the emulator, handle input, decode and draw emulator display */
 void app_frame() {
     #if CHIPS_USE_UI
-        spc1000ui_exec(&spc1000, clock_frame_time());
+        spc1000ui_exec(&spc1000, (int)(clock_frame_time()*spc1000.speed));
     #else
-        spc1000_exec(&spc1000, clock_frame_time());
+        spc1000_exec(&spc1000, (int)(clock_frame_time()*spc1000.speed));
     #endif
     gfx_draw(spc1000_display_width(&spc1000), spc1000_display_height(&spc1000));
     const uint32_t load_delay_frames = 120;
@@ -123,12 +129,13 @@ void app_frame() {
             keybuf_put((const char*)fs_ptr());
         }
         else {
-            load_success = spc1000_quickload(&spc1000, fs_ptr(), fs_size());
+            //load_success = spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
+            //printf("dat=%s\n", fs_ptr());
         }
         if (load_success) {
             if (clock_frame_count() > (load_delay_frames + 10)) {
                 gfx_flash_success();
-            }
+            }  
             if (sargs_exists("input")) {
                 keybuf_put(sargs_value("input"));
             }
@@ -155,6 +162,7 @@ void app_input(const sapp_event* event) {
     #endif
     switch (event->type) {
         int c;
+#if 0
         case SAPP_EVENTTYPE_CHAR:
             c = (int) event->char_code;
             if ((c > 0x20) && (c < 0x7F)) {
@@ -162,6 +170,7 @@ void app_input(const sapp_event* event) {
                 spc1000_key_up(&spc1000, c);
             }
             break;
+#endif
         case SAPP_EVENTTYPE_KEY_DOWN:
         case SAPP_EVENTTYPE_KEY_UP:
             switch (event->key_code) {
@@ -173,7 +182,7 @@ void app_input(const sapp_event* event) {
                 case SAPP_KEYCODE_ENTER:        c = 0x0D; break;
                 case SAPP_KEYCODE_BACKSPACE:    c = 0x0C; break;
                 case SAPP_KEYCODE_ESCAPE:       c = 0x07; break;
-                case SAPP_KEYCODE_RIGHT_CONTROL:c = 0x0F; break; 
+                case SAPP_KEYCODE_RIGHT_CONTROL: 
                 case SAPP_KEYCODE_LEFT_CONTROL: c = 0x0F; break; 
                 case SAPP_KEYCODE_F1:           c = 0xF1; break;
                 case SAPP_KEYCODE_F2:           c = 0xF2; break;
@@ -181,8 +190,16 @@ void app_input(const sapp_event* event) {
                 case SAPP_KEYCODE_F4:           c = 0xF4; break;
                 case SAPP_KEYCODE_F5:           c = 0xF5; break;
                 case SAPP_KEYCODE_END:          c = 0xF6; break;
+				case SAPP_KEYCODE_CAPS_LOCK:	c = 0xF7; break;
+				case SAPP_KEYCODE_RIGHT_ALT:
+				case SAPP_KEYCODE_LEFT_ALT:		c = 0xF8; break;
+				case SAPP_KEYCODE_RIGHT_SHIFT:
+				case SAPP_KEYCODE_LEFT_SHIFT:	c = 0x0E; break;
+
                 default:                        c = 0; break;
             }
+			if (event->key_code > 0x20 && event->key_code < 0x7f)
+				c = event->key_code;
             if (c) {
                 if (event->type == SAPP_EVENTTYPE_KEY_DOWN) {
                     spc1000_key_down(&spc1000, c);
