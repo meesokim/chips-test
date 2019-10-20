@@ -122,6 +122,7 @@ void app_frame() {
     #endif
     gfx_draw(spc1000_display_width(&spc1000), spc1000_display_height(&spc1000));
     const uint32_t load_delay_frames = 120;
+    static bool completed = false;
     if (fs_ptr() && clock_frame_count() > load_delay_frames) {
         bool load_success = false;
         if (fs_ext("txt") || fs_ext("bas")) {
@@ -132,19 +133,24 @@ void app_frame() {
             //load_success = spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
             //printf("dat=%s\n", fs_ptr());
         }
+
         if (load_success) {
             if (clock_frame_count() > (load_delay_frames + 10)) {
                 gfx_flash_success();
             }  
-            if (sargs_exists("input")) {
-                keybuf_put(sargs_value("input"));
-            }
         }
         else {
             gfx_flash_error();
         }
         fs_free();
     }
+    if (completed == false && clock_frame_count() > (load_delay_frames + 10)) {
+        keybuf_put("load\n               run\n");
+        completed = true;
+    } 
+	if (sargs_exists("input")) {
+		keybuf_put(sargs_value("input"));
+	}
     uint8_t key_code;
     if (0 != (key_code = keybuf_get())) {
         spc1000_key_down(&spc1000, key_code);
@@ -162,7 +168,7 @@ void app_input(const sapp_event* event) {
     #endif
     switch (event->type) {
         int c;
-#if 0
+#if 1
         case SAPP_EVENTTYPE_CHAR:
             c = (int) event->char_code;
             if ((c > 0x20) && (c < 0x7F)) {
