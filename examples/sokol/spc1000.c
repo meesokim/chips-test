@@ -145,7 +145,7 @@ void app_frame() {
         fs_free();
     }
     if (completed == false && clock_frame_count() > (load_delay_frames + 10)) {
-        keybuf_put("load\n               run\n");
+        //keybuf_put("load\n               run\n");
         completed = true;
     } 
 	if (sargs_exists("input")) {
