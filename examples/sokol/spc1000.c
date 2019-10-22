@@ -72,6 +72,7 @@ spc1000_desc_t spc1000_desc(spc1000_type_t type, spc1000_joystick_type_t joy_typ
         };
 }
 
+char tape_bytes[20*1024*1024];
 #include <stdio.h>
 /* one-time application init */
 void app_init() {
@@ -98,13 +99,31 @@ void app_init() {
     spc1000ui_init(&spc1000);
     #endif
     bool delay_input = false;
-    //printf("name=%s\n", sargs_value("file"));
     if (sargs_exists("file")) {
         delay_input = true;
         if (!fs_load_file(sargs_value("file"))) {
             gfx_flash_error();
         }
-        //spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
+        uint8_t* tape_ptr =  (uint8_t*) fs_ptr();
+        printf("name=%s, %d\n", sargs_value("file"), fs_size());
+        if (*tape_ptr != '0' && *tape_ptr != '1')
+        {
+            int size = fs_size();
+            int pos = 0;
+            for(int i = 0; i < size; i++)
+            {
+                pos = i * 8;
+                for(int j = 0; j < 8; j++)
+                {
+                    tape_bytes[pos] = '0' + ((tape_ptr[i] & (1 << (7-j))) > 0 ? 1 : 0);
+                    printf("%c",tape_bytes[pos]);
+                    pos++;
+                }
+            }
+            spc1000_tapeload(&spc1000, tape_bytes, size * 8);
+        }
+        else
+            spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
     }
     if (!delay_input) {
         if (sargs_exists("input")) {
@@ -168,7 +187,7 @@ void app_input(const sapp_event* event) {
     #endif
     switch (event->type) {
         int c;
-#if 1
+#if 0
         case SAPP_EVENTTYPE_CHAR:
             c = (int) event->char_code;
             if ((c > 0x20) && (c < 0x7F)) {

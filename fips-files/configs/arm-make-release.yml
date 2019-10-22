@@ -1,0 +1,9 @@
+---
+platform: ARM 
+generator: Mingw 
+build_tool: make
+build_type: Release
+cmake-toolchain: arm_none_eabi.cmake
+defines:
+
+
