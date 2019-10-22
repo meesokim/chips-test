@@ -1,3 +1,5 @@
 ---
+src_dir: spc1000
 files:
   - spcall.rom
+  - demo.tap
