@@ -7,6 +7,16 @@
 */
 #include "common.h"
 #define CHIPS_IMPL
+#ifdef _L
+#undef _L
+#endif
+#ifdef _C
+#undef _C
+#endif
+#ifdef _B
+#undef _B
+#endif
+
 #include "chips/z80.h"
 #include "chips/mc6847.h"
 #include "chips/beeper.h"
@@ -39,13 +49,15 @@ static void app_cleanup(void);
 
 sapp_desc sokol_main(int argc, char* argv[]) {
     sargs_setup(&(sargs_desc){ .argc=argc, .argv=argv });
+    // printf("sargs_setup...ok\n");
+    // fflush(stdout);
     return (sapp_desc) {
         .init_cb = app_init,
         .frame_cb = app_frame,
         .event_cb = app_input,
         .cleanup_cb = app_cleanup,
-        .width = 2 * spc1000_std_display_width(),
-        .height = 2 * spc1000_std_display_height() + ui_extra_height,
+        .width = 3 * spc1000_std_display_width(),
+        .height = 3 * spc1000_std_display_height() + ui_extra_height,
         .window_title = "SPC-1000 Samsung",
         .ios_keyboard_resizes_canvas = true
     };
@@ -72,7 +84,7 @@ spc1000_desc_t spc1000_desc(spc1000_type_t type, spc1000_joystick_type_t joy_typ
         };
 }
 
-char tape_bytes[20*1024*1024];
+uint8_t tape_bytes[20*1024*1024];
 #include <stdio.h>
 /* one-time application init */
 void app_init() {
@@ -80,7 +92,6 @@ void app_init() {
         #ifdef CHIPS_USE_UI
         .draw_extra_cb = ui_draw,
         #endif
-        .top_offset = ui_extra_height
     });
     keybuf_init(6);
     clock_init();
@@ -104,26 +115,28 @@ void app_init() {
         if (!fs_load_file(sargs_value("file"))) {
             gfx_flash_error();
         }
-        uint8_t* tape_ptr =  (uint8_t*) fs_ptr();
-        printf("name=%s, %d\n", sargs_value("file"), fs_size());
-        if (*tape_ptr != '0' && *tape_ptr != '1')
-        {
-            int size = fs_size();
-            int pos = 0;
-            for(int i = 0; i < size; i++)
-            {
-                pos = i * 8;
-                for(int j = 0; j < 8; j++)
-                {
-                    tape_bytes[pos] = '0' + ((tape_ptr[i] & (1 << (7-j))) > 0 ? 1 : 0);
-                    printf("%c",tape_bytes[pos]);
-                    pos++;
-                }
-            }
-            spc1000_tapeload(&spc1000, tape_bytes, size * 8);
-        }
-        else
-            spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
+		else
+		{
+			uint8_t* tape_ptr = (uint8_t*)fs_ptr();
+			if (*tape_ptr != '0' && *tape_ptr != '1')
+			{
+				int size = fs_size();
+				int pos = 0;
+				for (int i = 0; i < size; i++)
+				{
+					pos = i * 8;
+					for (int j = 0; j < 8; j++)
+					{
+						tape_bytes[pos] = '0' + ((tape_ptr[i] & (1 << (7 - j))) > 0 ? 1 : 0);
+						//                  printf("%c",tape_bytes[pos]);
+						pos++;
+					}
+				}
+				spc1000_tapeload(&spc1000, tape_bytes, size * 8);
+			}
+			else
+				spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
+		}
     }
     if (!delay_input) {
         if (sargs_exists("input")) {
@@ -140,7 +153,7 @@ void app_frame() {
         spc1000_exec(&spc1000, (int)(clock_frame_time()*spc1000.speed));
     #endif
     gfx_draw(spc1000_display_width(&spc1000), spc1000_display_height(&spc1000));
-    const uint32_t load_delay_frames = 120;
+    const uint32_t load_delay_frames = 60;
     static bool completed = false;
     if (fs_ptr() && clock_frame_count() > load_delay_frames) {
         bool load_success = false;
@@ -164,7 +177,7 @@ void app_frame() {
         fs_free();
     }
     if (completed == false && clock_frame_count() > (load_delay_frames + 10)) {
-        //keybuf_put("load\n               run\n");
+        keybuf_put("load\n               run\n");
         completed = true;
     } 
 	if (sargs_exists("input")) {

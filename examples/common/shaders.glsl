@@ -31,9 +31,13 @@ void main() {
 uniform sampler2D tex;
 in vec2 uv;
 out vec4 frag_color;
+float fmin = 0.7;
+vec3 calc_mask() {
+    return vec3(fmin + (1.0 - fmin) * (mod(gl_FragCoord.y, 0.8) * 2.0));
+}
 
 void main() {
-    frag_color = vec4(texture(tex, uv).xyz, 1.0);
+    frag_color = vec4(texture(tex, uv).xyz * calc_mask(), 2.0);
 }
 @end
 
