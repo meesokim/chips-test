@@ -111,13 +111,17 @@ void app_init() {
     #endif
     bool delay_input = false;
     if (sargs_exists("file")) {
-        delay_input = true;
+
         if (!fs_load_file(sargs_value("file"))) {
             gfx_flash_error();
+            printf("sargs_exists..%s\n", sargs_value("file"));
+            fflush(stdout);
+            delay_input = true;
         }
 		else
 		{
 			uint8_t* tape_ptr = (uint8_t*)fs_ptr();
+#if 0            
 			if (*tape_ptr != '0' && *tape_ptr != '1')
 			{
 				int size = fs_size();
@@ -135,7 +139,8 @@ void app_init() {
 				spc1000_tapeload(&spc1000, tape_bytes, size * 8);
 			}
 			else
-				spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
+#endif                
+            spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
 		}
     }
     if (!delay_input) {
