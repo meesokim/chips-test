@@ -58,7 +58,7 @@ sapp_desc sokol_main(int argc, char* argv[]) {
         .cleanup_cb = app_cleanup,
         .width = 3 * spc1000_std_display_width(),
         .height = 3 * spc1000_std_display_height() + ui_extra_height,
-        .window_title = "SPC-1000 Samsung",
+        .window_title = "SPC-1000 Samsung Electronics 1982",
         .ios_keyboard_resizes_canvas = true
     };
 }
@@ -114,32 +114,11 @@ void app_init() {
 
         if (!fs_load_file(sargs_value("file"))) {
             gfx_flash_error();
-            printf("sargs_exists..%s\n", sargs_value("file"));
-            fflush(stdout);
             delay_input = true;
         }
 		else
 		{
 			uint8_t* tape_ptr = (uint8_t*)fs_ptr();
-#if 0            
-			if (*tape_ptr != '0' && *tape_ptr != '1')
-			{
-				int size = fs_size();
-				int pos = 0;
-				for (int i = 0; i < size; i++)
-				{
-					pos = i * 8;
-					for (int j = 0; j < 8; j++)
-					{
-						tape_bytes[pos] = '0' + ((tape_ptr[i] & (1 << (7 - j))) > 0 ? 1 : 0);
-						//                  printf("%c",tape_bytes[pos]);
-						pos++;
-					}
-				}
-				spc1000_tapeload(&spc1000, tape_bytes, size * 8);
-			}
-			else
-#endif                
             spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
 		}
     }
@@ -253,7 +232,7 @@ void app_input(const sapp_event* event) {
             }
             break;
         case SAPP_EVENTTYPE_TOUCHES_BEGAN:
-            sapp_show_keyboard(true);
+//            sapp_show_keyboard(true);
             break;
         default:
             break;

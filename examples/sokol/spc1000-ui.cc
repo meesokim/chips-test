@@ -1,7 +1,9 @@
 /*
     UI implementation for spc1000.c, this must live in its own C++ file.
 */
+extern "C" {
 #include "common.h"
+}
 #include "imgui.h"
 #include "chips/z80.h"
 #include "chips/beeper.h"
@@ -44,13 +46,37 @@ static void boot_cb(spc1000_t* sys, spc1000_type_t type) {
     spc1000_init(sys, &desc);
 }
 
+void keybutton(char *key)
+{
+    if (ImGui::Button(key))
+    {
+        keybuf_put(key);
+    }
+    ImGui::SameLine();
+    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + 5, ImGui::GetCursorPos().y));    
+}
+
 void spc1000ui_draw(void) {
     ui_spc1000_draw(&ui_spc1000, exec_time);
+    bool g_bMenuOpen = false;
+    ImGui::SetNextWindowPos(ImVec2(0,(float)sapp_height()-50));
+    ImGui::Begin("B", &g_bMenuOpen, ImVec2(0,(float)sapp_height()), 0.f, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_AlwaysUseWindowPadding);
+    ImGuiStyle& style = ImGui::GetStyle();    
+    style.WindowBorderSize = 0.0f;  
+    ImGui::SetWindowFocus("top"); 
+    ImGui::SetNextWindowBgAlpha(0.0f);
+    ImGui::SetWindowFontScale(2.0);
+    keybutton("1");
+    keybutton("2");
+    keybutton("3");
+    keybutton("RUN\n");
+    ImGui::End();
 }
 
 void spc1000ui_init(spc1000_t* spc1000) {
     ui_init(spc1000ui_draw);
     ui_spc1000_desc_t desc = {0};
+    sapp_show_keyboard(true);
     desc.spc1000 = spc1000;
     desc.boot_cb = boot_cb;
     desc.create_texture_cb = gfx_create_texture;
@@ -67,6 +93,9 @@ void spc1000ui_init(spc1000_t* spc1000) {
     desc.dbg_keys.toggle_breakpoint_keycode = SAPP_KEYCODE_F9;
     desc.dbg_keys.toggle_breakpoint_name = "F9";
     ui_spc1000_init(&ui_spc1000, &desc);
+    // ImGuiIO* io = &ImGui::GetIO();
+    // io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    // ImGui::SetKeyboardFocusHere(1);
 }
 
 void spc1000ui_discard(void) {
