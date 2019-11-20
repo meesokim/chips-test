@@ -8,8 +8,8 @@ imports:
   fips-imgui:
     git: https://github.com/fips-libs/fips-imgui.git
   chips:
-    git: https://github.com/floooh/chips
+    git: https://github.com/meesokim/chips
   sokol:
-    git: https://github.com/floooh/sokol
+    git: https://github.com/meesokim/sokol
   sokol-tools-bin:
     git: https://github.com/floooh/sokol-tools-bin
