@@ -1,11 +1,12 @@
 #!/bin/bash
-dira="/home/meesokim/spc1000/spcbios"
+me=`whoami`
+dira="/home/$me/spc1000/spcbios"
 echo $0
 if [ "$0" == "./m" ]; then
-    spc1000="/home/meesokim/mame/mame64 spc1000 -uimodekey HOME -rompath /home/meesokim/mame/roms "
+    spc1000="/home/$me/mame/mame64 spc1000 -uimodekey HOME -rompath /home/$me/mame/roms "
     param="-cass "
 else    
-    spc1000="/home/meesokim/fips-deploy/chips-test/win64-vs2017-debug/spc1000-ui"
+    spc1000="/home/$me/fips-deploy/chips-test/win64-vstudio-release/spc1000-ui"
     param="file="
 fi
 if [ "$1" == "" ]; then
