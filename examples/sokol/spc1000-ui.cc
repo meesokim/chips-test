@@ -93,9 +93,6 @@ void spc1000ui_init(spc1000_t* spc1000) {
     desc.dbg_keys.toggle_breakpoint_keycode = SAPP_KEYCODE_F9;
     desc.dbg_keys.toggle_breakpoint_name = "F9";
     ui_spc1000_init(&ui_spc1000, &desc);
-    // ImGuiIO* io = &ImGui::GetIO();
-    // io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    // ImGui::SetKeyboardFocusHere(1);
 }
 
 void spc1000ui_discard(void) {

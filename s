@@ -1,12 +1,18 @@
 #!/bin/bash
 me=`whoami`
+a=`cat .fips-settings.yml`
+a=${a:9}
+a=${a/\}/}
 dira="/home/$me/spc1000/spcbios"
-echo $0
 if [ "$0" == "./m" ]; then
     spc1000="/home/$me/mame/mame64 spc1000 -uimodekey HOME -rompath /home/$me/mame/roms "
     param="-cass "
-else    
-    spc1000="/home/$me/fips-deploy/chips-test/win64-vstudio-release/spc1000-ui"
+else
+    if [[ $a == "*wasm*" ]]; then
+        spc1000="python3 -m http.server 80 --directory /home/$me/fips-deploy/chips-test/$a/"
+    else
+        spc1000="/home/$me/fips-deploy/chips-test/$a/spc1000-ui"
+    fi
     param="file="
 fi
 if [ "$1" == "" ]; then
