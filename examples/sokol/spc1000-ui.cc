@@ -46,7 +46,7 @@ static void boot_cb(spc1000_t* sys, spc1000_type_t type) {
     spc1000_init(sys, &desc);
 }
 
-void keybutton(char *key)
+void keybutton(const char *key)
 {
     if (ImGui::Button(key))
     {
