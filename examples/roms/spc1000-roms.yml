@@ -2,4 +2,16 @@
 src_dir: spc1000
 files:
   - spcall.rom
+  - Xevious.cas
+  - TomNJerry.cas
+  - tank2_7698_mayhouse.tap
+  - superxevious_mayhouse.tap
+  - SpaceGang_mayhouse.tap
+  - rambo.tap
+  - penzerspiche_mayhouse.tap
+  - radation.tap
+  - PENGO.tap
+  - a.v_mayhouse.tap
+  - k1.tap
+  - k5.tap
   - demo.tap

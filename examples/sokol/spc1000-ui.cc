@@ -28,6 +28,11 @@ extern "C" {
 #include "ui/ui_z80.h"
 #include "ui/ui_ay38910.h"
 #include "ui/ui_audio.h"
+#define DUMP_NUM_ITEMS (13)
+extern "C" {
+    typedef struct { const char* name; const uint8_t* ptr; int size; } dump_item;
+    extern dump_item dump_items[];
+}
 #include "ui/ui_spc1000.h"
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
@@ -46,30 +51,53 @@ static void boot_cb(spc1000_t* sys, spc1000_type_t type) {
     spc1000_init(sys, &desc);
 }
 
-void keybutton(const char *key)
+void keybutton(const char *key, int space)
 {
     if (ImGui::Button(key))
     {
         keybuf_put(key);
     }
     ImGui::SameLine();
-    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + 5, ImGui::GetCursorPos().y));    
+    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + space, ImGui::GetCursorPos().y));    
 }
 
 void spc1000ui_draw(void) {
     ui_spc1000_draw(&ui_spc1000, exec_time);
     bool g_bMenuOpen = false;
-    ImGui::SetNextWindowPos(ImVec2(0,(float)sapp_height()-50));
+    ImGui::SetNextWindowPos(ImVec2(0,(float)sapp_height()-60));
     ImGui::Begin("B", &g_bMenuOpen, ImVec2(0,(float)sapp_height()), 0.f, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_AlwaysUseWindowPadding);
     ImGuiStyle& style = ImGui::GetStyle();    
     style.WindowBorderSize = 0.0f;  
     ImGui::SetWindowFocus("top"); 
     ImGui::SetNextWindowBgAlpha(0.0f);
     ImGui::SetWindowFontScale(2.0);
-    keybutton("1");
-    keybutton("2");
-    keybutton("3");
-    keybutton("RUN\n");
+    keybutton("1",10);
+    keybutton("2",10);
+    keybutton("3",10);
+    keybutton("S",20);
+    keybutton("Y",10);
+    keybutton("LOAD\n",100);
+    keybutton("RUN\n",100);
+#if 0    
+    const float ItemSpacing = style.ItemSpacing.x;
+    static float HostButtonWidth = 00.0f; //The 100.0f is just a guess size for the first frame.
+    float pos = HostButtonWidth + ItemSpacing;
+    ImGui::SetCursorPos(ImVec2(sapp_window_width() - pos,  ImGui::GetCursorPos().y));
+    keybutton("/");
+    HostButtonWidth = ImGui::GetItemRectSize().x;
+    static float ClientButtonWidth = 100.0f;
+    pos += ClientButtonWidth + ItemSpacing;
+    ImGui::SameLine(sapp_window_width() - pos);
+    keybutton(",");
+    static float LocalButtonWidth = 100.0f;
+    pos += LocalButtonWidth + ItemSpacing;
+    ImGui::SameLine(sapp_window_width() - pos);
+    keybutton("Z");
+#else
+    keybutton(",",100);
+    keybutton("Z",100);    
+    keybutton("/",50);
+#endif    
     ImGui::End();
 }
 

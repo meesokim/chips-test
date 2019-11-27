@@ -119,8 +119,10 @@ void app_init() {
 		else
 		{
 			uint8_t* tape_ptr = (uint8_t*)fs_ptr();
-            spc1000_tapeload(&spc1000, fs_ptr(), fs_size());
+            spc1000_insert_tape(&spc1000, fs_ptr(), fs_size());
 		}
+    } else {
+        spc1000_insert_tape(&spc1000, desc.tap_spc1000, desc.tap_spc1000_size); 
     }
     if (!delay_input) {
         if (sargs_exists("input")) {
@@ -161,7 +163,7 @@ void app_frame() {
         fs_free();
     }
     if (completed == false && clock_frame_count() > (load_delay_frames + 10)) {
-        keybuf_put("load\n               run\n");
+        //keybuf_put("load\n");
         completed = true;
     } 
 	if (sargs_exists("input")) {
