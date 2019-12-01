@@ -28,10 +28,13 @@ extern "C" {
 #include "ui/ui_z80.h"
 #include "ui/ui_ay38910.h"
 #include "ui/ui_audio.h"
-#define DUMP_NUM_ITEMS (13)
+#define DUMP_NUM_ITEMS (15)
 extern "C" {
-    typedef struct { const char* name; const uint8_t* ptr; int size; } dump_item;
+    #define TYPE 1
+    #define BIN 0
+    typedef struct { const char* name; const uint8_t* ptr; int size; const int type; } dump_item;
     extern dump_item dump_items[];
+    extern unsigned char dump_namyangju_godic_otf[];
 }
 #include "ui/ui_spc1000.h"
 #ifdef __clang__
@@ -102,6 +105,10 @@ void spc1000ui_draw(void) {
 }
 
 void spc1000ui_init(spc1000_t* spc1000) {
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    ImFont *font = io.Fonts->AddFontFromMemoryTTF(dump_namyangju_godic_otf, 1453448, 16.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+//    ImGui::PushFontSize(14.0f);
     ui_init(spc1000ui_draw);
     ui_spc1000_desc_t desc = {0};
     sapp_show_keyboard(true);

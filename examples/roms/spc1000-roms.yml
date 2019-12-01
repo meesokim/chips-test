@@ -1,17 +1,18 @@
 ---
 src_dir: spc1000
 files:
+  - demo.tap: 데모테입
   - spcall.rom
-  - Xevious.cas
-  - TomNJerry.cas
-  - tank2_7698_mayhouse.tap
-  - superxevious_mayhouse.tap
-  - SpaceGang_mayhouse.tap
-  - rambo.tap
-  - penzerspiche_mayhouse.tap
-  - radation.tap
-  - PENGO.tap
-  - a.v_mayhouse.tap
-  - k1.tap
-  - k5.tap
-  - demo.tap
+  - Xevious.cas: 제비우스
+  - TomNJerry.cas: 톰과제리
+  - tank2_7698_mayhouse.tap: 탱크2
+  - superxevious_mayhouse.tap: 슈퍼제비우스
+  - SpaceGang_mayhouse.tap: 스페이스갱
+  - rambo.tap: 람보
+  - penzerspiche_mayhouse.tap: 펜자스피체
+  - radation.tap: 방사능오염
+  - PENGO.tap: 팽고
+  - a.v_mayhouse.tap: A.V.
+  - k1.tap: 공모전1집
+  - k5.tap: 공모전5집
+  - namyangju_godic.otf

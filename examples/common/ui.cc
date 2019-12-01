@@ -20,7 +20,7 @@ void ui_init(ui_draw_t draw_cb) {
     style.WindowBorderSize = 1.0f;
     style.Alpha = 1.0f;
     ui_draw_cb = draw_cb;
-}
+}   
 
 void ui_discard(void) {
     simgui_shutdown();
