@@ -12,6 +12,8 @@ else
         spc1000="python3 -m http.server 80 --directory /home/$me/fips-deploy/chips-test/$a/"
     elif [[ $a == *"droid"* ]]; then
         spc1000="../fips-sdks/android/platform-tools/adb install /home/$me/fips-deploy/chips-test/$a/spc1000-ui.apk"
+    elif [[ $a == *"arm-make"* ]]; then
+        spc1000="cp /home/$me/fips-build/chips-test/$a/examples/sokol/kernel7.img /d"
     else
         spc1000="/home/$me/fips-deploy/chips-test/$a/spc1000-ui"
     fi
